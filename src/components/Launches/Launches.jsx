@@ -1,56 +1,64 @@
-import React from "react";
-import { useEffect, useState, useRef } from "react";
-import { fetchLaunches } from "../../services/SpacexService";
-import Launch from "./Launch";
+import React from 'react';
+import { useEffect, useState } from 'react';
+import { fetchLaunches } from '../../services/SpacexService';
+import Spinner from '../Spinner/Spinner';
+import Launch from './Launch';
 
 const Launches = () => {
-  const scrollable = useRef();
-  const [launches, setlaunches] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+	const [launches, setlaunches] = useState([]);
+	const [offset, setOffset] = useState(10);
+	const [isLoading, setIsLoading] = useState(true);
+	const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  useEffect(() => {
-    setIsLoading(true);
+	useEffect(() => {
+		setIsLoading(true);
 
-    getLaunches();
-  }, []);
+		getLaunches();
+	}, []);
 
-  const getLaunches = async () => {
-    const data = await fetchLaunches();
+	const getLaunches = async () => {
+		const data = await fetchLaunches();
 
-    setlaunches(data);
-    setIsLoading(false);
-  };
+		setlaunches(data);
+		setIsLoading(false);
+	};
 
-  const handleScroll = () => {
-    if (scrollable.current) {
-      const { scrollTop, scrollHeight, clientHeight } = scrollable.current;
-      if (scrollTop + clientHeight === scrollHeight) {
-        // TO SOMETHING HERE
-        console.log("Reached bottom");
-      }
-    }
-  };
+	const getMoreLaunches = async () => {
+		setIsLoadingMore(true);
 
-  return (
-    <div
-      className="main__wrapper"
-      ref={scrollable}
-      onScroll={() => handleScroll()}
-    >
-      {isLoading ? (
-        <div>loading...</div>
-      ) : (
-        launches.map((launch) => {
-          return (
-            <Launch
-              key={`${launch.flight_number}-${launch.launch_date_unix}`}
-              launch={launch}
-            />
-          );
-        })
-      )}
-    </div>
-  );
+		const data = await fetchLaunches(offset);
+
+		setlaunches([...launches, data].flat());
+		setOffset(offset + 10);
+
+		setIsLoadingMore(false);
+	};
+
+	const handleScroll = (e) => {
+		const bottom =
+			e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+		if (bottom) {
+			getMoreLaunches();
+		}
+	};
+
+	return (
+		<div className='main__wrapper' onScroll={handleScroll}>
+			{isLoading ? (
+				<Spinner />
+			) : (
+				launches.map((launch) => {
+					return (
+						<Launch
+							key={`${launch.flight_number}-${launch.launch_date_unix}`}
+							launch={launch}
+						/>
+					);
+				})
+			)}
+			{isLoadingMore ? <Spinner /> : ''}
+		</div>
+	);
 };
 
 export default Launches;
