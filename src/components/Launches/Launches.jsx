@@ -6,30 +6,19 @@ import Launch from './Launch';
 
 const Launches = () => {
 	const [launches, setlaunches] = useState([]);
-	const [offset, setOffset] = useState(10);
+	const [offset, setOffset] = useState(0);
 	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
 		setIsLoading(true);
 
 		getLaunches();
-	}, []);
+	}, [offset]);
 
 	const getLaunches = async () => {
-		const data = await fetchLaunches();
-
-		setlaunches(data);
-		setIsLoading(false);
-	};
-
-	const getMoreLaunches = async () => {
-		setIsLoading(true);
-
 		const data = await fetchLaunches(offset);
-
+		console.log(offset);
 		setlaunches([...launches, data].flat());
-		setOffset(offset + 10);
-
 		setIsLoading(false);
 	};
 
@@ -37,7 +26,7 @@ const Launches = () => {
 		const bottom =
 			e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
 		if (bottom) {
-			getMoreLaunches();
+			setOffset(offset + 10);
 		}
 	};
 
