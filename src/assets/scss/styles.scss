@@ -114,15 +114,8 @@ input[type='search'] {
 .main__wrapper {
 	display: block;
 	margin: 0 auto;
-	height: 100vh;
+	height: 75vh;
 	overflow-y: scroll;
-
-	/* Hide scrollbar for IE, Edge and Firefox */
-	-ms-overflow-style: none; /* IE and Edge */
-	scrollbar-width: none; /* Firefox */
-	&::-webkit-scrollbar {
-		display: none;
-	}
 }
 
 h2 {
@@ -170,6 +163,7 @@ img {
 
 		&--success {
 			background-color: lime;
+			color: black;
 		}
 
 		&--danger {
@@ -183,6 +177,9 @@ img {
 
 		&--info {
 			background-color: cyan;
+			width: fit-content;
+			padding: 0.5rem;
+			font-size: small;
 		}
 	}
 
@@ -224,4 +221,30 @@ img {
 
 .max-reached {
 	padding: 1rem 0;
+}
+
+.spinner-container {
+	height: 20vh;
+	display: flex;
+	align-items: center;
+}
+
+/* width */
+::-webkit-scrollbar {
+	width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: #555;
 }
