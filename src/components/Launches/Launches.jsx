@@ -8,7 +8,6 @@ const Launches = () => {
 	const [launches, setlaunches] = useState([]);
 	const [offset, setOffset] = useState(10);
 	const [isLoading, setIsLoading] = useState(true);
-	const [isLoadingMore, setIsLoadingMore] = useState(false);
 
 	useEffect(() => {
 		setIsLoading(true);
@@ -24,14 +23,14 @@ const Launches = () => {
 	};
 
 	const getMoreLaunches = async () => {
-		setIsLoadingMore(true);
+		setIsLoading(true);
 
 		const data = await fetchLaunches(offset);
 
 		setlaunches([...launches, data].flat());
 		setOffset(offset + 10);
 
-		setIsLoadingMore(false);
+		setIsLoading(false);
 	};
 
 	const handleScroll = (e) => {
@@ -44,7 +43,7 @@ const Launches = () => {
 
 	return (
 		<div className='main__wrapper' onScroll={handleScroll}>
-			{isLoading ? (
+			{isLoading && launches.length === 0 ? (
 				<Spinner />
 			) : (
 				launches.map((launch) => {
@@ -56,7 +55,13 @@ const Launches = () => {
 					);
 				})
 			)}
-			{isLoadingMore ? <Spinner /> : ''}
+			{isLoading && launches.length > 0 ? (
+				<div className='spinner-container'>
+					<Spinner />
+				</div>
+			) : (
+				''
+			)}
 		</div>
 	);
 };
